@@ -38,7 +38,9 @@ const PropertySidebar: React.FC<PropertySidebarProps> = ({ isOpen, onClose }) =>
   };
 
   const openGoogleMaps = () => {
-    const url = `https://www.google.com/maps?q=${selectedProperty.latitud},${selectedProperty.longitud}`;
+    const lat = selectedProperty.latitud || selectedProperty.coordinates.lat;
+    const lng = selectedProperty.longitud || selectedProperty.coordinates.lng;
+    const url = `https://www.google.com/maps?q=${lat},${lng}`;
     window.open(url, '_blank');
   };
 
@@ -62,36 +64,38 @@ const PropertySidebar: React.FC<PropertySidebarProps> = ({ isOpen, onClose }) =>
         </div>
         
         <div className="sidebar-content">
-          {/* Image Section */}
-          {selectedProperty.imageUrl && (
-            <div className="property-section image-section">
-              <h3>Imagen de la Propiedad</h3>
-              <div className="property-image-container" onClick={openImageModal}>
+          <div className="property-section">
+            <h3>Imagen</h3>
+            <div className="property-image">
+              {selectedProperty.imageUrl ? (
                 <img 
                   src={selectedProperty.imageUrl} 
-                  alt="Propiedad" 
-                  className="property-image"
+                  alt={`Propiedad ${selectedProperty.numeroRol || selectedProperty.title}`}
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
-                <div className="image-overlay">
-                  <span className="zoom-text">Click para ampliar</span>
+              ) : (
+                <div className="no-image">
+                  <span>Sin imagen disponible</span>
                 </div>
-              </div>
+              )}
             </div>
-          )}
+          </div>
 
           <div className="property-section">
             <h3>Identificación</h3>
             <div className="property-field">
               <label>N° ROL de Avalúo:</label>
-              <span className="value highlight">{selectedProperty.numeroRol}</span>
+              <span className="value highlight">{selectedProperty.numeroRol || selectedProperty.title}</span>
             </div>
             <div className="property-field">
               <label>Dirección:</label>
-              <span className="value">{selectedProperty.direccion}</span>
+              <span className="value">{selectedProperty.direccion || selectedProperty.location}</span>
             </div>
             <div className="property-field">
               <label>Destino del bien raíz:</label>
-              <span className="value">{selectedProperty.destinoBienRaiz}</span>
+              <span className="value">{selectedProperty.destinoBienRaiz || selectedProperty.type}</span>
             </div>
           </div>
 
@@ -99,11 +103,11 @@ const PropertySidebar: React.FC<PropertySidebarProps> = ({ isOpen, onClose }) =>
             <h3>Propietario</h3>
             <div className="property-field">
               <label>Registrado a nombre de:</label>
-              <span className="value">{selectedProperty.registradoNombre}</span>
+              <span className="value">{selectedProperty.registradoNombre || 'No disponible'}</span>
             </div>
             <div className="property-field">
               <label>RUT registrado:</label>
-              <span className="value">{selectedProperty.rutRegistrado}</span>
+              <span className="value">{selectedProperty.rutRegistrado || 'No disponible'}</span>
             </div>
           </div>
 
@@ -111,11 +115,11 @@ const PropertySidebar: React.FC<PropertySidebarProps> = ({ isOpen, onClose }) =>
             <h3>Superficies</h3>
             <div className="property-field">
               <label>Superficie Terreno:</label>
-              <span className="value">{selectedProperty.superficieTerreno.toLocaleString()} m²</span>
+              <span className="value">{(selectedProperty.superficieTerreno || selectedProperty.area || 0).toLocaleString()} m²</span>
             </div>
             <div className="property-field">
               <label>Superficie Construcciones:</label>
-              <span className="value">{selectedProperty.superficieConstrucciones.toLocaleString()} m²</span>
+              <span className="value">{(selectedProperty.superficieConstrucciones || 0).toLocaleString()} m²</span>
             </div>
           </div>
 
@@ -123,23 +127,23 @@ const PropertySidebar: React.FC<PropertySidebarProps> = ({ isOpen, onClose }) =>
             <h3>Avalúos</h3>
             <div className="property-field">
               <label>Avalúo Terreno Propio:</label>
-              <span className="value">${selectedProperty.avaluoTerrenoPropio.toLocaleString()}</span>
+              <span className="value">${(selectedProperty.avaluoTerrenoPropio || 0).toLocaleString()}</span>
             </div>
             <div className="property-field">
               <label>Avalúo Construcciones:</label>
-              <span className="value">${selectedProperty.avaluoConstrucciones.toLocaleString()}</span>
+              <span className="value">${(selectedProperty.avaluoConstrucciones || 0).toLocaleString()}</span>
             </div>
             <div className="property-field total">
               <label>Avalúo Total:</label>
-              <span className="value highlight">${selectedProperty.avaluoTotal.toLocaleString()}</span>
+              <span className="value highlight">${(selectedProperty.avaluoTotal || selectedProperty.price || 0).toLocaleString()}</span>
             </div>
             <div className="property-field">
               <label>Avalúo Exento de Impuesto:</label>
-              <span className="value">${selectedProperty.avaluoExentoImpuesto.toLocaleString()}</span>
+              <span className="value">${(selectedProperty.avaluoExentoImpuesto || 0).toLocaleString()}</span>
             </div>
             <div className="property-field">
               <label>Avalúo Afecto a Impuesto:</label>
-              <span className="value">${selectedProperty.avaluoAfectoImpuesto.toLocaleString()}</span>
+              <span className="value">${(selectedProperty.avaluoAfectoImpuesto || 0).toLocaleString()}</span>
             </div>
           </div>
 
@@ -147,11 +151,11 @@ const PropertySidebar: React.FC<PropertySidebarProps> = ({ isOpen, onClose }) =>
             <h3>Ubicación</h3>
             <div className="property-field">
               <label>Latitud:</label>
-              <span className="value">{selectedProperty.latitud}</span>
+              <span className="value">{selectedProperty.latitud || selectedProperty.coordinates.lat}</span>
             </div>
             <div className="property-field">
               <label>Longitud:</label>
-              <span className="value">{selectedProperty.longitud}</span>
+              <span className="value">{selectedProperty.longitud || selectedProperty.coordinates.lng}</span>
             </div>
           </div>
 
