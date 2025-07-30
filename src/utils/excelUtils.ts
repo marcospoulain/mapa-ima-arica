@@ -85,6 +85,25 @@ export const parseExcelToProperties = (file: File): Promise<Property[]> => {
           try {
             const property: Property = {
               id: `prop_${Date.now()}_${i}`,
+              title: String(row[headers.indexOf('Número de ROL de Avalúo')] || ''),
+              type: String(row[headers.indexOf('Destino del bien raíz')] || 'residencial'),
+              price: Number(row[headers.indexOf('AVALÚO TOTAL')] || 0),
+              location: String(row[headers.indexOf('Dirección')] || ''),
+              description: `Propiedad con ROL ${String(row[headers.indexOf('Número de ROL de Avalúo')] || '')}`,
+              bedrooms: 0, // Valor por defecto
+              bathrooms: 0, // Valor por defecto
+              area: Number(row[headers.indexOf('SUPERFICIE TERRENO')] || 0),
+              coordinates: {
+                lat: Number(row[headers.indexOf('Latitud')] || 0),
+                lng: Number(row[headers.indexOf('Longitud')] || 0)
+              },
+              imageUrl: '/placeholder-property.jpg', // Imagen por defecto
+              features: [],
+              status: 'disponible',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              
+              // Campos adicionales del modelo anterior
               rol: String(row[headers.indexOf('Número de ROL de Avalúo')] || ''),
               numeroRol: String(row[headers.indexOf('Número de ROL de Avalúo')] || ''),
               direccion: String(row[headers.indexOf('Dirección')] || ''),
@@ -112,15 +131,15 @@ export const parseExcelToProperties = (file: File): Promise<Property[]> => {
             };
             
             // Validate required fields
-            if (!property.rol || !property.direccion) {
-              console.warn(`Fila ${i + 1}: ROL o dirección faltante, omitiendo`);
+            if (!property.title || !property.location) {
+              console.warn(`Fila ${i + 1}: Título o ubicación faltante, omitiendo`);
               continue;
             }
             
             // Validate coordinates
-            if (!property.latitud || !property.longitud || 
-                property.latitud < -90 || property.latitud > 90 ||
-                property.longitud < -180 || property.longitud > 180) {
+            if (!property.coordinates.lat || !property.coordinates.lng || 
+                property.coordinates.lat < -90 || property.coordinates.lat > 90 ||
+                property.coordinates.lng < -180 || property.coordinates.lng > 180) {
               console.warn(`Fila ${i + 1}: Coordenadas inválidas, omitiendo`);
               continue;
             }
@@ -154,21 +173,25 @@ export const exportPropertiesToExcel = (properties: Property[], filename: string
   try {
     // Convert properties to Excel format
     const excelData = properties.map(property => ({
-      'Número de ROL de Avalúo': property.numeroRol,
-      'Dirección': property.direccion,
-      'Destino del bien raíz': property.destinoBienRaiz,
-      'Registrado a Nombre de': property.registradoNombre,
-      'RUT registrado': property.rutRegistrado,
-      'SUPERFICIE TERRENO': property.superficieTerreno,
-      'SUPERFICIE CONSTRUCCIONES': property.superficieConstrucciones,
-      'AVALÚO TERRENO PROPIO': property.avaluoTerrenoPropio,
-      'AVALÚO CONSTRUCCIONES': property.avaluoConstrucciones,
-      'AVALÚO TOTAL': property.avaluoTotal,
-      'AVALÚO EXENTO DE IMPUESTO': property.avaluoExentoImpuesto,
-      'AVALÚO AFECTO A IMPUESTO': property.avaluoAfectoImpuesto,
-      'Latitud': property.latitud,
-      'Longitud': property.longitud,
+      'Número de ROL de Avalúo': property.rol || property.title,
+      'Dirección': property.direccion || property.location,
+      'Destino del bien raíz': property.destinoBienRaiz || property.type,
+      'Registrado a Nombre de': property.registradoNombre || '',
+      'RUT registrado': property.rutRegistrado || '',
+      'SUPERFICIE TERRENO': property.superficieTerreno || property.area,
+      'SUPERFICIE CONSTRUCCIONES': property.superficieConstrucciones || 0,
+      'AVALÚO TERRENO PROPIO': property.avaluoTerrenoPropio || 0,
+      'AVALÚO CONSTRUCCIONES': property.avaluoConstrucciones || 0,
+      'AVALÚO TOTAL': property.avaluoTotal || property.price,
+      'AVALÚO EXENTO DE IMPUESTO': property.avaluoExentoImpuesto || 0,
+      'AVALÚO AFECTO A IMPUESTO': property.avaluoAfectoImpuesto || 0,
+      'Latitud': property.latitud || property.coordinates.lat,
+      'Longitud': property.longitud || property.coordinates.lng,
       'Código Postal': property.codigoPostal || '',
+      'Habitaciones': property.bedrooms || 0,
+      'Baños': property.bathrooms || 0,
+      'Estado': property.status || 'disponible',
+      'Características': property.features ? property.features.join(', ') : '',
     }));
     
     // Create workbook and worksheet
