@@ -1,0 +1,112 @@
+.property-image-hover { 
+  position: absolute; 
+  width: 250px; 
+  height: 200px;
+  background: white; 
+  border-radius: 8px; 
+  -webkit-border-radius: 8px; 
+  -moz-border-radius: 8px; 
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); 
+  -webkit-box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); 
+  -moz-box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); 
+  z-index: 1000; 
+  overflow: hidden; 
+  animation: hoverFadeIn 0.2s ease-out; 
+  -webkit-animation: hoverFadeIn 0.2s ease-out; 
+  -moz-animation: hoverFadeIn 0.2s ease-out; 
+  transform: translate(-50%, -100%); 
+  -webkit-transform: translate(-50%, -100%); 
+  -moz-transform: translate(-50%, -100%); 
+  margin-top: -10px; 
+  pointer-events: none; 
+  will-change: transform, opacity; 
+  -webkit-backface-visibility: hidden; 
+  backface-visibility: hidden; 
+  user-select: none; 
+  -webkit-user-select: none; 
+  -moz-user-select: none; 
+  -ms-user-select: none; 
+} 
+
+.hover-image-container { 
+  width: 100%; 
+  height: 120px; 
+  overflow: hidden; 
+} 
+
+.hover-image { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  display: block; 
+} 
+
+.hover-info { 
+  height: 80px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.85); 
+  color: white; 
+  padding: 12px; 
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+} 
+
+.hover-title { 
+  font-size: 14px; 
+  font-weight: 600; 
+  margin: 0;
+  margin-bottom: 4px; 
+  color: white; 
+} 
+
+.hover-address { 
+  font-size: 12px; 
+  color: #e0e0e0; 
+  margin: 0;
+  margin-bottom: 6px; 
+  line-height: 1.3; 
+} 
+
+.hover-details { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  font-size: 11px; 
+  color: #cccccc; 
+  margin: 0;
+} 
+
+.hover-area { 
+  font-weight: 500; 
+  margin: 0;
+} 
+
+.hover-price { 
+  font-weight: 600; 
+  color: #4CAF50; 
+  margin: 0;
+} 
+
+@keyframes hoverFadeIn { 
+  from { 
+    opacity: 0; 
+    transform: translate(-50%, -100%) scale(0.95); 
+  } 
+  to { 
+    opacity: 1; 
+    transform: translate(-50%, -100%) scale(1); 
+  } 
+} 
+
+/* Añadir prefijos para mejor compatibilidad */ 
+@-webkit-keyframes hoverFadeIn { 
+  from { 
+    opacity: 0; 
+    -webkit-transform: translate(-50%, -100%) scale(0.95); 
+    transform: translate(-50%, -100%) scale(0.95); 
+  } 
+  to { 
+    opacity: 1; 
+    -webkit-transform: translate(-50%, -100%) scale(1); 
+    transform: translate(-50%, -100%) scale(1); 
+  } 
+}
