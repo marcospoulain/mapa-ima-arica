@@ -8,16 +8,16 @@ const AdminStats: React.FC = () => {
 
   const stats = {
     totalProperties: properties.length,
-    totalAvaluo: properties.reduce((sum, prop) => sum + prop.avaluoTotal, 0),
-    avgAvaluo: properties.length > 0 ? properties.reduce((sum, prop) => sum + prop.avaluoTotal, 0) / properties.length : 0,
-    totalTerrainArea: properties.reduce((sum, prop) => sum + prop.superficieTerreno, 0),
-    totalConstructionArea: properties.reduce((sum, prop) => sum + prop.superficieConstrucciones, 0),
+    totalAvaluo: properties.reduce((sum, prop) => sum + (prop.avaluoTotal || prop.price || 0), 0),
+    avgAvaluo: properties.length > 0 ? properties.reduce((sum, prop) => sum + (prop.avaluoTotal || prop.price || 0), 0) / properties.length : 0,
+    totalTerrainArea: properties.reduce((sum, prop) => sum + (prop.superficieTerreno || prop.area || 0), 0),
+    totalConstructionArea: properties.reduce((sum, prop) => sum + (prop.superficieConstrucciones || 0), 0),
     propertyTypes: {} as Record<string, number>,
   };
 
   // Calculate property types distribution
   properties.forEach(prop => {
-    const type = prop.destinoBienRaiz || 'Sin especificar';
+    const type = prop.destinoBienRaiz || prop.type || 'Sin especificar';
     stats.propertyTypes[type] = (stats.propertyTypes[type] || 0) + 1;
   });
 

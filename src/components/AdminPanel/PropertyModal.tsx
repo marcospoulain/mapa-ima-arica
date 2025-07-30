@@ -80,7 +80,7 @@ const PropertyModal: React.FC<PropertyModalProps> = ({
     setImagePreview(null);
     setFormData(prev => ({
       ...prev,
-      imageUrl: undefined
+      imageUrl: ''
     }));
   };
 
@@ -112,39 +112,39 @@ const PropertyModal: React.FC<PropertyModalProps> = ({
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.numeroRol.trim()) {
+    if (!(formData.numeroRol || '').trim()) {
       newErrors.numeroRol = 'El ROL es requerido';
     }
 
-    if (!formData.direccion.trim()) {
+    if (!(formData.direccion || '').trim()) {
       newErrors.direccion = 'La dirección es requerida';
     }
 
-    if (!formData.registradoNombre.trim()) {
+    if (!(formData.registradoNombre || '').trim()) {
       newErrors.registradoNombre = 'El propietario es requerido';
     }
 
-    if (formData.latitud < -90 || formData.latitud > 90) {
+    if ((formData.latitud || 0) < -90 || (formData.latitud || 0) > 90) {
       newErrors.latitud = 'La latitud debe estar entre -90 y 90';
     }
 
-    if (formData.longitud < -180 || formData.longitud > 180) {
+    if ((formData.longitud || 0) < -180 || (formData.longitud || 0) > 180) {
       newErrors.longitud = 'La longitud debe estar entre -180 y 180';
     }
 
-    if (formData.superficieTerreno < 0) {
+    if ((formData.superficieTerreno || 0) < 0) {
       newErrors.superficieTerreno = 'La superficie del terreno no puede ser negativa';
     }
 
-    if (formData.superficieConstrucciones < 0) {
+    if ((formData.superficieConstrucciones || 0) < 0) {
       newErrors.superficieConstrucciones = 'La superficie de construcción no puede ser negativa';
     }
 
-    if (formData.avaluoTerrenoPropio < 0) {
+    if ((formData.avaluoTerrenoPropio || 0) < 0) {
       newErrors.avaluoTerrenoPropio = 'El avalúo del terreno no puede ser negativo';
     }
 
-    if (formData.avaluoConstrucciones < 0) {
+    if ((formData.avaluoConstrucciones || 0) < 0) {
       newErrors.avaluoConstrucciones = 'El avalúo de construcción no puede ser negativo';
     }
 
