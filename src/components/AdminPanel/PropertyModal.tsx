@@ -159,7 +159,7 @@ const PropertyModal: React.FC<PropertyModalProps> = ({
       // Calculate total avaluo
       const updatedProperty = {
         ...formData,
-        avaluoTotal: formData.avaluoTerrenoPropio + formData.avaluoConstrucciones
+        avaluoTotal: (formData.avaluoTerrenoPropio || 0) + (formData.avaluoConstrucciones || 0)
       };
       
       onSave(updatedProperty);
@@ -412,7 +412,7 @@ const PropertyModal: React.FC<PropertyModalProps> = ({
           <div className="form-summary">
             <div className="summary-item">
               <strong>Avalúo Total: </strong>
-              ${(formData.avaluoTerrenoPropio + formData.avaluoConstrucciones).toLocaleString('es-CL')}
+              ${((formData.avaluoTerrenoPropio || 0) + (formData.avaluoConstrucciones || 0)).toLocaleString('es-CL')}
             </div>
           </div>
 
