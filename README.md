@@ -9,7 +9,7 @@ Una aplicación web interactiva para visualizar propiedades inmobiliarias en un 
 - **Búsqueda y filtros** avanzados
 - **Vista detallada** de propiedades con galería de imágenes
 - **Autenticación** de usuarios
-- **Base de datos en tiempo real** con Firebase
+- **Base de datos en tiempo real** con Supabase
 - **Diseño responsive** para dispositivos móviles y desktop
 
 ## 🛠️ Tecnologías utilizadas
@@ -17,7 +17,7 @@ Una aplicación web interactiva para visualizar propiedades inmobiliarias en un 
 - **React** con TypeScript
 - **Leaflet** para mapas interactivos
 - **Semantic UI React** para componentes de interfaz
-- **Firebase** (Firestore, Storage, Auth)
+- **Supabase** (Database, Storage, Auth)
 - **CSS3** para estilos personalizados
 
 ## 📦 Instalación
@@ -33,10 +33,11 @@ cd mapa-ima
 npm install
 ```
 
-3. Configura Firebase:
-   - Crea un proyecto en [Firebase Console](https://console.firebase.google.com)
-   - Habilita Firestore Database, Storage y Authentication
-   - Copia `.env.example` a `.env` y completa con tus credenciales de Firebase
+3. Configura Supabase:
+   - Crea un proyecto en [Supabase](https://supabase.com)
+   - Crea una tabla `properties` con la estructura definida en `src/types/supabase.ts`
+   - Crea un bucket de Storage llamado `property-images`
+   - Copia `.env.example` a `.env` y completa con tus credenciales de Supabase
 
 4. Inicia el servidor de desarrollo:
 ```bash
@@ -52,34 +53,45 @@ npm start
 2. Configura las variables de entorno en Vercel Dashboard
 3. Deploy automático en cada push a main
 
-### Opción 2: Firebase Hosting
-1. Instala Firebase CLI: `npm install -g firebase-tools`
-2. Inicia sesión: `firebase login`
-3. Inicializa: `firebase init hosting`
-4. Build: `npm run build`
-5. Deploy: `firebase deploy`
-
-### Opción 3: Netlify
+### Opción 2: Netlify
 1. Conecta tu repositorio con [Netlify](https://netlify.com)
 2. Configura build command: `npm run build`
 3. Configura publish directory: `build`
 4. Agrega variables de entorno
 
-## 🔧 Configuración de Firebase
+
+
+## 🔧 Configuración de Supabase
 
 ### Variables de entorno requeridas:
 ```env
-REACT_APP_FIREBASE_API_KEY=tu_api_key
-REACT_APP_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
-REACT_APP_FIREBASE_PROJECT_ID=tu_proyecto_id
-REACT_APP_FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
-REACT_APP_FIREBASE_MESSAGING_SENDER_ID=123456789
-REACT_APP_FIREBASE_APP_ID=1:123456789:web:abcdef123456
+REACT_APP_SUPABASE_URL=https://tu-proyecto.supabase.co
+REACT_APP_SUPABASE_ANON_KEY=tu_clave_anon_aqui
 ```
 
-### Configuración de Firestore:
-1. Crea una colección llamada `properties`
-2. Configura las reglas de seguridad según tus necesidades
+### Configuración de la base de datos:
+1. Crea una tabla llamada `properties` con la siguiente estructura:
+   - id: uuid (primary key)
+   - title: text
+   - type: text
+   - price: numeric
+   - location: text
+   - description: text
+   - bedrooms: integer
+   - bathrooms: integer
+   - area: numeric
+   - coordinates: jsonb (lat, lng)
+   - image_url: text
+   - features: jsonb (array)
+   - status: text
+   - created_at: timestamp with time zone
+   - updated_at: timestamp with time zone
+
+2. Configura las políticas de seguridad según tus necesidades
+
+### Configuración de Storage:
+1. Crea un bucket llamado `property-images`
+2. Configura las políticas de acceso público para las imágenes
 
 ## 🏗️ Scripts disponibles
 
@@ -102,16 +114,16 @@ src/
 │   ├── Search/        # Búsqueda y filtros
 │   └── Stats/         # Estadísticas
 ├── context/           # Context API de React
-├── firebase/          # Configuración y servicios de Firebase
+├── supabase/          # Configuración y servicios de Supabase
 ├── types/            # Definiciones de TypeScript
 └── utils/            # Utilidades y migración de datos
 ```
 
 ## 📊 Migración de datos
 
-Para migrar datos desde Excel a Firebase:
+Para migrar datos desde Excel a Supabase:
 1. Usa el componente PropertyCreator en el panel de administración
-2. O utiliza la función `migrateExcelDataToFirebase` en `src/utils/firebaseMigration.ts`
+2. O utiliza la función `migrateExcelDataToSupabase` en `src/utils/supaMigration.ts`
 
 ## 🤝 Contribuir
 

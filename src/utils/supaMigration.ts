@@ -1,10 +1,10 @@
-import { addProperty } from '../firebase/propertyService';
+import { addProperty } from '../supabase/propertyService';
 import { Property } from '../types';
 
-// Función para migrar datos del Excel a Firebase
-export const migrateExcelDataToFirebase = async (excelData: any[]): Promise<void> => {
+// Función para migrar datos del Excel a Supabase
+export const migrateExcelDataToSupabase = async (excelData: any[]): Promise<void> => {
   try {
-    console.log('Iniciando migración de datos a Firebase...');
+    console.log('Iniciando migración de datos a Supabase...');
     
     for (let i = 0; i < excelData.length; i++) {
       const row = excelData[i];
@@ -46,8 +46,8 @@ export const migrateExcelDataToFirebase = async (excelData: any[]): Promise<void
   }
 };
 
-// Función para exportar datos de Firebase a Excel (backup)
-export const exportFirebaseDataToExcel = async (): Promise<void> => {
+// Función para exportar datos de Supabase a Excel (backup)
+export const exportSupabaseDataToExcel = async (): Promise<void> => {
   // Esta función se puede implementar más tarde si necesitas hacer backups
   console.log('Función de exportación disponible para implementar');
 };
