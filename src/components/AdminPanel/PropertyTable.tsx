@@ -16,13 +16,13 @@ const PropertyTable: React.FC = () => {
   // Filter and sort properties
   const filteredAndSortedProperties = useMemo(() => {
     let filtered = state.properties.filter(property =>
-      property.numeroRol.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      property.direccion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      property.registradoNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      property.rutRegistrado.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      property.destinoBienRaiz.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      property.avaluoTotal.toString().includes(searchTerm) ||
-      property.superficieTerreno.toString().includes(searchTerm)
+      (property.numeroRol || property.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (property.direccion || property.location || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (property.registradoNombre || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (property.rutRegistrado || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (property.destinoBienRaiz || property.type || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (property.avaluoTotal || property.price || 0).toString().includes(searchTerm) ||
+      (property.superficieTerreno || property.area || 0).toString().includes(searchTerm)
     );
 
     filtered.sort((a, b) => {
@@ -61,7 +61,7 @@ const PropertyTable: React.FC = () => {
 
   const handleDelete = (propertyId: string) => {
     const property = state.properties.find(p => p.id === propertyId);
-    if (property && window.confirm(`¿Estás seguro de que quieres eliminar la propiedad ROL ${property.numeroRol}?`)) {
+    if (property && window.confirm(`¿Estás seguro de que quieres eliminar la propiedad ROL ${property.numeroRol || property.title}?`)) {
       dispatch({ type: 'DELETE_PROPERTY', payload: propertyId });
       const updatedProperties = state.properties.filter(p => p.id !== propertyId);
       savePropertiesToStorage(updatedProperties);
