@@ -184,11 +184,11 @@ const PropertyTable: React.FC = () => {
           <tbody>
             {paginatedProperties.map((property) => (
               <tr key={property.id}>
-                <td className="rol-cell">{property.numeroRol}</td>
-                <td className="address-cell">{property.direccion}</td>
-                <td className="owner-cell">{property.registradoNombre}</td>
-                <td className="avaluo-cell">${property.avaluoTotal.toLocaleString()}</td>
-                <td className="surface-cell">{property.superficieTerreno.toLocaleString()} m²</td>
+                <td className="rol-cell">{property.numeroRol || property.title}</td>
+                <td className="address-cell">{property.direccion || property.location}</td>
+                <td className="owner-cell">{property.registradoNombre || 'No disponible'}</td>
+                <td className="avaluo-cell">${(property.avaluoTotal || property.price || 0).toLocaleString()}</td>
+                <td className="surface-cell">{(property.superficieTerreno || property.area || 0).toLocaleString()} m²</td>
                 <td className="actions-cell">
                   <button
                     onClick={() => handleEdit(property)}

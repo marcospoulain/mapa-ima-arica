@@ -53,8 +53,8 @@ const PropertyImageHover: React.FC<PropertyImageHoverProps> = ({
     return 'Propiedad';
   };
 
-  const propertyType = getPropertyType(property.destino || property.destinoBienRaiz || '');
-  const totalArea = (property.superficieTerreno || 0) + (property.superficieConstrucciones || property.superficieConstruccion || 0);
+  const propertyType = getPropertyType(property.destino || property.destinoBienRaiz || property.type || '');
+  const totalArea = (property.superficieTerreno || property.area || 0) + (property.superficieConstrucciones || property.superficieConstruccion || 0);
 
   return (
     <div 
@@ -67,7 +67,7 @@ const PropertyImageHover: React.FC<PropertyImageHoverProps> = ({
       <div className="hover-image-container">
         <img 
           src={property.imageUrl} 
-          alt={`Propiedad en ${property.direccion}`}
+          alt={`Propiedad en ${property.direccion || property.location}`}
           className="hover-image"
           onError={(e) => {
             // Ocultar tooltip si la imagen no carga
@@ -81,13 +81,13 @@ const PropertyImageHover: React.FC<PropertyImageHoverProps> = ({
       </div>
       <div className="hover-info">
         <div className="hover-title">{propertyType}</div>
-        <div className="hover-address">{property.direccion}</div>
+        <div className="hover-address">{property.direccion || property.location}</div>
         <div className="hover-details">
           {totalArea > 0 && (
             <span className="hover-area">{totalArea.toLocaleString()} m²</span>
           )}
-          {property.avaluoTotal > 0 && (
-            <span className="hover-price">${property.avaluoTotal.toLocaleString()}</span>
+          {(property.avaluoTotal || property.price || 0) > 0 && (
+            <span className="hover-price">${(property.avaluoTotal || property.price || 0).toLocaleString()}</span>
           )}
         </div>
       </div>
