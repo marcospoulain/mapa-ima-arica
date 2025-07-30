@@ -14,20 +14,23 @@ export const getProperties = async (): Promise<Property[]> => {
     // Mapear los datos de Supabase al formato de Property
     return data.map((item) => ({
       id: item.id,
-      title: item.title,
-      type: item.type,
-      price: item.price,
-      location: item.location,
-      description: item.description,
-      bedrooms: item.bedrooms,
-      bathrooms: item.bathrooms,
-      area: item.area,
-      coordinates: item.coordinates as { lat: number; lng: number },
-      imageUrl: item.image_url,
-      features: item.features as string[],
-      status: item.status,
+      title: item.title || '',
+      type: item.type || '',
+      price: item.price || 0,
+      location: item.location || '',
+      description: item.description || '',
+      bedrooms: item.bedrooms || 0,
+      bathrooms: item.bathrooms || 0,
+      area: item.area || 0,
+      coordinates: (item.coordinates as { lat: number; lng: number }) || { lat: -18.4783, lng: -70.3126 },
+      imageUrl: item.image_url || '',
+      features: (item.features as string[]) || [],
+      status: item.status || 'active',
       createdAt: new Date(item.created_at),
-      updatedAt: new Date(item.updated_at)
+      updatedAt: new Date(item.updated_at),
+      // Campos adicionales para compatibilidad
+      latitud: (item.coordinates as any)?.lat || -18.4783,
+      longitud: (item.coordinates as any)?.lng || -70.3126
     }));
   } catch (error) {
     console.error('Error getting properties:', error);
@@ -40,18 +43,21 @@ export const addProperty = async (property: Omit<Property, 'id'>): Promise<strin
   try {
     // Convertir de formato Property a formato Supabase
     const supabaseProperty = {
-      title: property.title,
-      type: property.type,
-      price: property.price,
-      location: property.location,
-      description: property.description,
-      bedrooms: property.bedrooms,
-      bathrooms: property.bathrooms,
-      area: property.area,
-      coordinates: property.coordinates,
-      image_url: property.imageUrl,
-      features: property.features,
-      status: property.status,
+      title: property.title || property.direccion || 'Sin título',
+      type: property.type || property.destinoBienRaiz || 'Sin especificar',
+      price: property.price || property.avaluoTotal || 0,
+      location: property.location || property.direccion || '',
+      description: property.description || '',
+      bedrooms: property.bedrooms || 0,
+      bathrooms: property.bathrooms || 0,
+      area: property.area || property.superficieTerreno || 0,
+      coordinates: property.coordinates || { 
+        lat: property.latitud || -18.4783, 
+        lng: property.longitud || -70.3126 
+      },
+      image_url: property.imageUrl || '',
+      features: property.features || [],
+      status: property.status || 'active',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -88,6 +94,27 @@ export const updateProperty = async (id: string, property: Partial<Property>): P
     if (property.imageUrl !== undefined) supabaseProperty.image_url = property.imageUrl;
     if (property.features !== undefined) supabaseProperty.features = property.features;
     if (property.status !== undefined) supabaseProperty.status = property.status;
+    
+    // Mapear campos adicionales
+    if (property.direccion !== undefined && !supabaseProperty.title) {
+      supabaseProperty.title = property.direccion;
+      supabaseProperty.location = property.direccion;
+    }
+    if (property.destinoBienRaiz !== undefined && !supabaseProperty.type) {
+      supabaseProperty.type = property.destinoBienRaiz;
+    }
+    if (property.avaluoTotal !== undefined && !supabaseProperty.price) {
+      supabaseProperty.price = property.avaluoTotal;
+    }
+    if (property.superficieTerreno !== undefined && !supabaseProperty.area) {
+      supabaseProperty.area = property.superficieTerreno;
+    }
+    if ((property.latitud !== undefined || property.longitud !== undefined) && !supabaseProperty.coordinates) {
+      supabaseProperty.coordinates = {
+        lat: property.latitud || -18.4783,
+        lng: property.longitud || -70.3126
+      };
+    }
     
     supabaseProperty.updated_at = new Date().toISOString();
 
@@ -180,20 +207,23 @@ export const searchProperties = async (filters: {
     // Mapear los datos de Supabase al formato de Property
     return data.map((item) => ({
       id: item.id,
-      title: item.title,
-      type: item.type,
-      price: item.price,
-      location: item.location,
-      description: item.description,
-      bedrooms: item.bedrooms,
-      bathrooms: item.bathrooms,
-      area: item.area,
-      coordinates: item.coordinates as { lat: number; lng: number },
-      imageUrl: item.image_url,
-      features: item.features as string[],
-      status: item.status,
+      title: item.title || '',
+      type: item.type || '',
+      price: item.price || 0,
+      location: item.location || '',
+      description: item.description || '',
+      bedrooms: item.bedrooms || 0,
+      bathrooms: item.bathrooms || 0,
+      area: item.area || 0,
+      coordinates: (item.coordinates as { lat: number; lng: number }) || { lat: -18.4783, lng: -70.3126 },
+      imageUrl: item.image_url || '',
+      features: (item.features as string[]) || [],
+      status: item.status || 'active',
       createdAt: new Date(item.created_at),
-      updatedAt: new Date(item.updated_at)
+      updatedAt: new Date(item.updated_at),
+      // Campos adicionales para compatibilidad
+      latitud: (item.coordinates as any)?.lat || -18.4783,
+      longitud: (item.coordinates as any)?.lng || -70.3126
     }));
   } catch (error) {
     console.error('Error searching properties:', error);
