@@ -9,6 +9,7 @@ Una aplicación web interactiva para visualizar propiedades inmobiliarias en un 
 - **Búsqueda y filtros** avanzados
 - **Vista detallada** de propiedades con galería de imágenes
 - **Autenticación** de usuarios
+- **Base de datos en tiempo real** con Firebase
 - **Diseño responsive** para dispositivos móviles y desktop
 
 ## 🛠️ Tecnologías utilizadas
@@ -16,6 +17,7 @@ Una aplicación web interactiva para visualizar propiedades inmobiliarias en un 
 - **React** con TypeScript
 - **Leaflet** para mapas interactivos
 - **Semantic UI React** para componentes de interfaz
+- **Firebase** (Firestore, Storage, Auth)
 - **CSS3** para estilos personalizados
 
 ## 📦 Instalación
@@ -31,12 +33,53 @@ cd mapa-ima
 npm install
 ```
 
-3. Inicia el servidor de desarrollo:
+3. Configura Firebase:
+   - Crea un proyecto en [Firebase Console](https://console.firebase.google.com)
+   - Habilita Firestore Database, Storage y Authentication
+   - Copia `.env.example` a `.env` y completa con tus credenciales de Firebase
+
+4. Inicia el servidor de desarrollo:
 ```bash
 npm start
 ```
 
-4. Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
+5. Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
+
+## 🌐 Deployment
+
+### Opción 1: Vercel (Recomendado)
+1. Conecta tu repositorio GitHub con [Vercel](https://vercel.com)
+2. Configura las variables de entorno en Vercel Dashboard
+3. Deploy automático en cada push a main
+
+### Opción 2: Firebase Hosting
+1. Instala Firebase CLI: `npm install -g firebase-tools`
+2. Inicia sesión: `firebase login`
+3. Inicializa: `firebase init hosting`
+4. Build: `npm run build`
+5. Deploy: `firebase deploy`
+
+### Opción 3: Netlify
+1. Conecta tu repositorio con [Netlify](https://netlify.com)
+2. Configura build command: `npm run build`
+3. Configura publish directory: `build`
+4. Agrega variables de entorno
+
+## 🔧 Configuración de Firebase
+
+### Variables de entorno requeridas:
+```env
+REACT_APP_FIREBASE_API_KEY=tu_api_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
+REACT_APP_FIREBASE_PROJECT_ID=tu_proyecto_id
+REACT_APP_FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=123456789
+REACT_APP_FIREBASE_APP_ID=1:123456789:web:abcdef123456
+```
+
+### Configuración de Firestore:
+1. Crea una colección llamada `properties`
+2. Configura las reglas de seguridad según tus necesidades
 
 ## 🏗️ Scripts disponibles
 
@@ -59,9 +102,16 @@ src/
 │   ├── Search/        # Búsqueda y filtros
 │   └── Stats/         # Estadísticas
 ├── context/           # Context API de React
+├── firebase/          # Configuración y servicios de Firebase
 ├── types/            # Definiciones de TypeScript
-└── utils/            # Utilidades
+└── utils/            # Utilidades y migración de datos
 ```
+
+## 📊 Migración de datos
+
+Para migrar datos desde Excel a Firebase:
+1. Usa el componente PropertyCreator en el panel de administración
+2. O utiliza la función `migrateExcelDataToFirebase` en `src/utils/firebaseMigration.ts`
 
 ## 🤝 Contribuir
 
