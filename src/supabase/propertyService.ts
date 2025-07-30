@@ -1,5 +1,9 @@
 import { supabase } from './config';
 import { Property } from '../types';
+import { Database } from '../types/supabase';
+
+// Tipo para los datos de Supabase
+type SupabaseProperty = Database['public']['Tables']['properties']['Row'];
 
 // Obtener todas las propiedades
 export const getProperties = async (): Promise<Property[]> => {
@@ -12,7 +16,7 @@ export const getProperties = async (): Promise<Property[]> => {
     if (error) throw error;
 
     // Mapear los datos de Supabase al formato de Property
-    return data.map((item) => ({
+    return data.map((item: SupabaseProperty) => ({
       id: item.id,
       title: item.title || '',
       type: item.type || '',
@@ -205,7 +209,7 @@ export const searchProperties = async (filters: {
     if (error) throw error;
 
     // Mapear los datos de Supabase al formato de Property
-    return data.map((item) => ({
+    return data.map((item: SupabaseProperty) => ({
       id: item.id,
       title: item.title || '',
       type: item.type || '',
