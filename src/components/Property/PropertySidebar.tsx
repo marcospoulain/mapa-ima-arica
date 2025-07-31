@@ -37,13 +37,6 @@ const PropertySidebar: React.FC<PropertySidebarProps> = ({ isOpen, onClose }) =>
     onClose();
   };
 
-  const openGoogleMaps = () => {
-    const lat = selectedProperty.latitud || selectedProperty.coordinates.lat;
-    const lng = selectedProperty.longitud || selectedProperty.coordinates.lng;
-    const url = `https://www.google.com/maps?q=${lat},${lng}`;
-    window.open(url, '_blank');
-  };
-
   const openImageModal = () => {
     setIsImageModalOpen(true);
   };
@@ -66,21 +59,29 @@ const PropertySidebar: React.FC<PropertySidebarProps> = ({ isOpen, onClose }) =>
         <div className="sidebar-content">
           <div className="property-section">
             <h3>Imagen</h3>
-            <div className="property-image">
-              {selectedProperty.imageUrl ? (
+            {selectedProperty.imageUrl ? (
+              <div className="property-image-container" onClick={openImageModal}>
                 <img 
                   src={selectedProperty.imageUrl} 
                   alt={`Propiedad ${selectedProperty.numeroRol || selectedProperty.title}`}
+                  className="property-image"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                   }}
                 />
-              ) : (
+                <div className="image-overlay">
+                  <div className="zoom-text">
+                    🔍 Clic para ampliar
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="property-image-container">
                 <div className="no-image">
                   <span>Sin imagen disponible</span>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           <div className="property-section">
@@ -88,10 +89,6 @@ const PropertySidebar: React.FC<PropertySidebarProps> = ({ isOpen, onClose }) =>
             <div className="property-field">
               <label>N° ROL de Avalúo:</label>
               <span className="value highlight">{selectedProperty.numeroRol || selectedProperty.title}</span>
-            </div>
-            <div className="property-field">
-              <label>Dirección:</label>
-              <span className="value">{selectedProperty.direccion || selectedProperty.location}</span>
             </div>
             <div className="property-field">
               <label>Destino del bien raíz:</label>
@@ -150,19 +147,9 @@ const PropertySidebar: React.FC<PropertySidebarProps> = ({ isOpen, onClose }) =>
           <div className="property-section">
             <h3>Ubicación</h3>
             <div className="property-field">
-              <label>Latitud:</label>
-              <span className="value">{selectedProperty.latitud || selectedProperty.coordinates.lat}</span>
+              <label>Dirección:</label>
+              <span className="value">{selectedProperty.direccion || selectedProperty.location}</span>
             </div>
-            <div className="property-field">
-              <label>Longitud:</label>
-              <span className="value">{selectedProperty.longitud || selectedProperty.coordinates.lng}</span>
-            </div>
-          </div>
-
-          <div className="sidebar-actions">
-            <button className="btn btn-primary" onClick={openGoogleMaps}>
-              Ver en Google Maps
-            </button>
           </div>
         </div>
       </div>
