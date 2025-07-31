@@ -52,12 +52,12 @@ const AdminPanel: React.FC = () => {
               />
               <div className="admin-title-text">
                 {isAdmin ? (
-                  <h1>
-                    Panel de Administración
-                    <span className="subtitle">
-                      - Gestión de propiedades y datos del sistema
-                    </span>
-                  </h1>
+                  <>
+                    <h1 style={{ fontWeight: 'bold', color: 'white' }}>Panel de Administración</h1>
+                    <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.9rem', color: 'white' }}>
+                      Gestión de propiedades y datos del sistema
+                    </p>
+                  </>
                 ) : (
                   <>
                     <h1 style={{ fontWeight: 'bold' }}>Panel de Estadísticas</h1>
@@ -85,6 +85,9 @@ const AdminPanel: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Separador colorido */}
+      <div className="color-separator"></div>
 
       <div className="container">
         <div className="admin-tabs">

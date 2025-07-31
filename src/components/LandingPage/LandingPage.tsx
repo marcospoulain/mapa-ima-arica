@@ -24,6 +24,9 @@ const LandingPage: React.FC = () => {
         onClose={() => {}} 
       />
       
+      {/* Separador colorido */}
+      <div className="color-separator"></div>
+      
       <Footer />
     </div>
   );

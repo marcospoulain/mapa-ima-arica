@@ -3,7 +3,7 @@
   color: white;
   padding: var(--spacing-sm) 0;
   box-shadow: var(--shadow-lg);
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;

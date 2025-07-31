@@ -10,6 +10,29 @@
   box-shadow: var(--shadow);
 }
 
+/* Separador colorido específico para AdminPanel */
+.admin-panel .color-separator {
+  height: 7px;
+  background: linear-gradient(to right, 
+    #00a5e1 0%, 
+    #00a5e1 25%, 
+    #00ac8e 25%, 
+    #00ac8e 50%, 
+    #ec6750 50%, 
+    #ec6750 75%, 
+    #fcc551 75%, 
+    #fcc551 100%
+  );
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  position: static; /* Sobrescribe el position: fixed del LandingPage */
+  bottom: auto; /* Resetea el bottom del LandingPage */
+  left: auto; /* Resetea el left del LandingPage */
+  right: auto; /* Resetea el right del LandingPage */
+  z-index: auto; /* Resetea el z-index del LandingPage */
+}
+
 .admin-header-content {
   display: flex;
   justify-content: space-between;
