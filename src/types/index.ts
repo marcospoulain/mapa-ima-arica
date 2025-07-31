@@ -46,7 +46,11 @@ export interface Property {
 }
 
 export interface User {
-  username: string;
+  id?: string;
+  username?: string;
+  email?: string;
+  name?: string;
+  role?: 'admin' | 'user';
   isAuthenticated: boolean;
 }
 

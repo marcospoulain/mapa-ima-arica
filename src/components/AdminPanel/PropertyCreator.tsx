@@ -5,7 +5,7 @@ import CoordinateSelector from './CoordinateSelector';
 import './PropertyCreator.css';
 
 const PropertyCreator: React.FC = () => {
-  const { dispatch } = useApp();
+  const { state, dispatch } = useApp();
   const [formData, setFormData] = useState<Partial<Property>>({
     numeroRol: '',
     direccion: '',
@@ -24,6 +24,11 @@ const PropertyCreator: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCoordinateSelector, setShowCoordinateSelector] = useState(false);
+
+  // Verificar si el usuario es administrador
+  const isAdmin = state.user?.email === 'admin@ima.cl' || 
+                 state.user?.email === 'test@mapa-ima.com' || 
+                 state.user?.email === 'marcos.vergara@municipalidadarica.cl';
 
   const handleCoordinateSelect = (latitude: number, longitude: number, address?: string) => {
     setFormData(prev => ({
@@ -87,6 +92,12 @@ const PropertyCreator: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isAdmin) {
+      alert('No tienes permisos para crear propiedades. Solo los administradores pueden realizar esta acción.');
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
@@ -165,7 +176,16 @@ const PropertyCreator: React.FC = () => {
         <p>Complete los datos de la nueva propiedad</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="creator-form">
+      {!isAdmin && (
+        <div className="user-notification">
+          <div className="notification-content">
+            <h3>Acceso Restringido</h3>
+            <p>Solo los administradores pueden crear nuevas propiedades. Contacta al administrador si necesitas agregar propiedades.</p>
+          </div>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className={`creator-form ${!isAdmin ? 'disabled' : ''}`}>
         <div className="form-grid">
           <div className="form-group">
             <label htmlFor="numeroRol">ROL *</label>
@@ -378,8 +398,12 @@ const PropertyCreator: React.FC = () => {
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-            {isSubmitting ? 'Creando...' : 'Crear Propiedad'}
+          <button 
+            type="submit" 
+            className="btn btn-primary" 
+            disabled={isSubmitting || !isAdmin}
+          >
+            {isSubmitting ? 'Creando...' : !isAdmin ? 'Solo Administradores' : 'Crear Propiedad'}
           </button>
         </div>
       </form>

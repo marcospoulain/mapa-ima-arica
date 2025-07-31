@@ -173,44 +173,44 @@ const AdminStats: React.FC = () => {
   return (
     <div className="admin-stats">
       <div className="stats-header">
-        <h2>📊 Dashboard de Estadísticas</h2>
-        <p>Análisis completo del sistema de propiedades</p>
+        <h2>Dashboard de Estadísticas</h2>
+        <p>Análisis del sistema de propiedades</p>
       </div>
       
       {/* KPI Cards */}
       <div className="stats-grid">
         <div className="stat-card primary">
-          <div className="stat-icon">🏠</div>
+          <div className="stat-icon">■</div>
           <div className="stat-content">
             <h3>Total Propiedades</h3>
-            <p className="stat-number">{stats.totalProperties.toLocaleString()}</p>
+            <p className="stat-number">{stats.totalProperties}</p>
             <span className="stat-trend positive">+12% vs mes anterior</span>
           </div>
         </div>
 
         <div className="stat-card success">
-          <div className="stat-icon">💰</div>
+          <div className="stat-icon">$</div>
           <div className="stat-content">
             <h3>Avalúo Total</h3>
-            <p className="stat-number">${(stats.totalAvaluo / 1000000).toFixed(1)}M</p>
+            <p className="stat-number">${Math.round(stats.totalAvaluo).toLocaleString()}</p>
             <span className="stat-trend positive">+8% vs mes anterior</span>
           </div>
         </div>
 
         <div className="stat-card info">
-          <div className="stat-icon">📈</div>
+          <div className="stat-icon">↗</div>
           <div className="stat-content">
             <h3>Avalúo Promedio</h3>
-            <p className="stat-number">${(stats.avgAvaluo / 1000000).toFixed(1)}M</p>
+            <p className="stat-number">${Math.round(stats.avgAvaluo).toLocaleString()}</p>
             <span className="stat-trend neutral">Sin cambios</span>
           </div>
         </div>
 
         <div className="stat-card warning">
-          <div className="stat-icon">🌍</div>
+          <div className="stat-icon">◆</div>
           <div className="stat-content">
             <h3>Superficie Total</h3>
-            <p className="stat-number">{(stats.totalTerrainArea / 1000).toFixed(1)}K m²</p>
+            <p className="stat-number">{Math.round(stats.totalTerrainArea).toLocaleString()} m²</p>
             <span className="stat-trend positive">+5% vs mes anterior</span>
           </div>
         </div>

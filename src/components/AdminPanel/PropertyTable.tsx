@@ -13,6 +13,11 @@ const PropertyTable: React.FC = () => {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
 
+  // Verificar si el usuario es administrador
+  const isAdmin = state.user?.email === 'admin@ima.cl' || 
+                 state.user?.email === 'test@mapa-ima.com' || 
+                 state.user?.email === 'marcos.vergara@municipalidadarica.cl';
+
   // Filter and sort properties
   const filteredAndSortedProperties = useMemo(() => {
     let filtered = state.properties.filter(property =>
@@ -60,6 +65,11 @@ const PropertyTable: React.FC = () => {
   };
 
   const handleDelete = (propertyId: string) => {
+    if (!isAdmin) {
+      alert('No tienes permisos para eliminar propiedades. Solo los administradores pueden realizar esta acción.');
+      return;
+    }
+    
     const property = state.properties.find(p => p.id === propertyId);
     if (property && window.confirm(`¿Estás seguro de que quieres eliminar la propiedad ROL ${property.numeroRol || property.title}?`)) {
       dispatch({ type: 'DELETE_PROPERTY', payload: propertyId });
@@ -69,6 +79,10 @@ const PropertyTable: React.FC = () => {
   };
 
   const handleEdit = (property: Property) => {
+    if (!isAdmin) {
+      alert('No tienes permisos para editar propiedades. Solo los administradores pueden realizar esta acción.');
+      return;
+    }
     setEditingProperty(property);
   };
 
@@ -102,6 +116,15 @@ const PropertyTable: React.FC = () => {
   return (
     <div className="property-table">
       <h2>Gestión de Propiedades</h2>
+      
+      {!isAdmin && (
+        <div className="user-notification">
+          <div className="notification-content">
+            <h3>Modo Solo Lectura</h3>
+            <p>Puedes visualizar las propiedades pero no editarlas ni eliminarlas. Solo los administradores pueden realizar estas acciones.</p>
+          </div>
+        </div>
+      )}
       
       <div className="table-controls">
         <div className="search-control">
@@ -178,7 +201,7 @@ const PropertyTable: React.FC = () => {
               <th onClick={() => handleSort('superficieTerreno')} className="sortable">
                 Superficie {getSortIcon('superficieTerreno')}
               </th>
-              <th>Acciones</th>
+              {isAdmin && <th>Acciones</th>}
             </tr>
           </thead>
           <tbody>
@@ -189,22 +212,24 @@ const PropertyTable: React.FC = () => {
                 <td className="owner-cell">{property.registradoNombre || 'No disponible'}</td>
                 <td className="avaluo-cell">${(property.avaluoTotal || property.price || 0).toLocaleString()}</td>
                 <td className="surface-cell">{(property.superficieTerreno || property.area || 0).toLocaleString()} m²</td>
-                <td className="actions-cell">
-                  <button
-                    onClick={() => handleEdit(property)}
-                    className="btn btn-secondary btn-sm"
-                    title="Editar propiedad"
-                  >
-                    ✏️
-                  </button>
-                  <button
-                    onClick={() => handleDelete(property.id)}
-                    className="btn btn-danger btn-sm"
-                    title="Eliminar propiedad"
-                  >
-                    🗑️
-                  </button>
-                </td>
+                {isAdmin && (
+                  <td className="actions-cell">
+                    <button
+                      onClick={() => handleEdit(property)}
+                      className="btn btn-secondary btn-sm"
+                      title="Editar propiedad"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      onClick={() => handleDelete(property.id)}
+                      className="btn btn-danger btn-sm"
+                      title="Eliminar propiedad"
+                    >
+                      🗑️
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

@@ -9,6 +9,11 @@ const FileUpload: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Verificar si el usuario es administrador
+  const isAdmin = state.user?.email === 'admin@ima.cl' || 
+                 state.user?.email === 'test@mapa-ima.com' || 
+                 state.user?.email === 'marcos.vergara@municipalidadarica.cl';
+
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -36,6 +41,11 @@ const FileUpload: React.FC = () => {
   };
 
   const handleFile = async (file: File) => {
+    if (!isAdmin) {
+      alert('No tienes permisos para cargar archivos. Solo los administradores pueden realizar esta acción.');
+      return;
+    }
+
     if (!validateFileType(file)) {
       dispatch({ 
         type: 'SET_ERROR', 
@@ -86,12 +96,25 @@ const FileUpload: React.FC = () => {
   };
 
   const openFileDialog = () => {
+    if (!isAdmin) {
+      alert('No tienes permisos para cargar archivos. Solo los administradores pueden realizar esta acción.');
+      return;
+    }
     fileInputRef.current?.click();
   };
 
   return (
     <div className="file-upload">
       <h2>Gestión de Archivos</h2>
+      
+      {!isAdmin && (
+        <div className="user-notification">
+          <div className="notification-content">
+            <h3>Acceso Restringido</h3>
+            <p>Solo los administradores pueden cargar y gestionar archivos. Puedes exportar los datos existentes.</p>
+          </div>
+        </div>
+      )}
       
       <div className="upload-section">
         <h3>Cargar Archivo Excel</h3>
@@ -101,12 +124,12 @@ const FileUpload: React.FC = () => {
         </p>
         
         <div
-          className={`upload-area ${dragActive ? 'drag-active' : ''} ${uploading ? 'uploading' : ''}`}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
-          onClick={openFileDialog}
+          className={`upload-area ${dragActive ? 'drag-active' : ''} ${uploading ? 'uploading' : ''} ${!isAdmin ? 'disabled' : ''}`}
+          onDragEnter={isAdmin ? handleDrag : undefined}
+          onDragLeave={isAdmin ? handleDrag : undefined}
+          onDragOver={isAdmin ? handleDrag : undefined}
+          onDrop={isAdmin ? handleDrop : undefined}
+          onClick={isAdmin ? openFileDialog : undefined}
         >
           <input
             ref={fileInputRef}
@@ -125,9 +148,14 @@ const FileUpload: React.FC = () => {
             <div className="upload-content">
               <div className="upload-icon">📁</div>
               <p className="upload-text">
-                {dragActive ? 'Suelta el archivo aquí' : 'Arrastra un archivo Excel aquí o haz clic para seleccionar'}
+                {!isAdmin 
+                  ? 'Solo los administradores pueden cargar archivos'
+                  : dragActive 
+                    ? 'Suelta el archivo aquí' 
+                    : 'Arrastra un archivo Excel aquí o haz clic para seleccionar'
+                }
               </p>
-              <p className="upload-formats">Formatos soportados: .xlsx, .xls</p>
+              {isAdmin && <p className="upload-formats">Formatos soportados: .xlsx, .xls</p>}
             </div>
           )}
         </div>

@@ -74,6 +74,30 @@
   color: var(--text-secondary);
 }
 
+.user-notification {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.user-notification .notification-content h3 {
+  margin: 0 0 0.25rem 0;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.user-notification .notification-content p {
+  margin: 0;
+  color: white;
+  font-size: 0.875rem;
+}
+
 .table-container {
   overflow-x: auto;
   border: 1px solid var(--border-color);

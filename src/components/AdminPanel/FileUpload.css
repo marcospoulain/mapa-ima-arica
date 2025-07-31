@@ -52,6 +52,45 @@
   opacity: 0.7;
 }
 
+.upload-area.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  background: #f5f5f5;
+  border-color: #d1d5db;
+}
+
+.upload-area.disabled:hover {
+  border-color: #d1d5db;
+  background: #f5f5f5;
+  transform: none;
+}
+
+.user-notification {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+
+
+.user-notification .notification-content h3 {
+  margin: 0 0 0.25rem 0;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.user-notification .notification-content p {
+  margin: 0;
+  color: white;
+  font-size: 0.875rem;
+}
+
 .upload-content {
   pointer-events: none;
 }

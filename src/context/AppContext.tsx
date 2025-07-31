@@ -1,6 +1,15 @@
 import React, { createContext, useContext, useReducer, useCallback, ReactNode, useEffect } from 'react';
-import { Property, User, AppState } from '../types';
+import { Property, User } from '../types';
 import { loadInitialData } from '../utils/initialDataLoader';
+
+export interface AppState {
+  properties: Property[];
+  selectedProperty: Property | null;
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  showReadOnlyNotice: boolean;
+}
 
 type Action =
   | { type: 'SET_PROPERTIES'; payload: Property[] }
@@ -11,7 +20,9 @@ type Action =
   | { type: 'SET_USER'; payload: User | null }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
-  | { type: 'CLEAR_ALL_PROPERTIES' };
+  | { type: 'CLEAR_ALL_PROPERTIES' }
+  | { type: 'CLEAR_ALL_DATA' }
+  | { type: 'DISMISS_READONLY_NOTICE' };
 
 const initialState: AppState = {
   properties: [],
@@ -19,6 +30,7 @@ const initialState: AppState = {
   user: null,
   loading: false,
   error: null,
+  showReadOnlyNotice: true,
 };
 
 function appReducer(state: AppState, action: Action): AppState {
@@ -50,6 +62,10 @@ function appReducer(state: AppState, action: Action): AppState {
       return { ...state, error: action.payload, loading: false };
     case 'CLEAR_ALL_PROPERTIES':
       return { ...state, properties: [], selectedProperty: null };
+    case 'CLEAR_ALL_DATA':
+      return { ...state, properties: [], selectedProperty: null };
+    case 'DISMISS_READONLY_NOTICE':
+      return { ...state, showReadOnlyNotice: false };
     default:
       return state;
   }

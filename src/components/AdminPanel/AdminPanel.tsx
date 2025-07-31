@@ -1,30 +1,43 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
-import FileUpload from './FileUpload';
-import PropertyTable from './PropertyTable';
 import AdminStats from './AdminStats';
+import FileUpload from './FileUpload';
 import PropertyCreator from './PropertyCreator';
+import PropertyTable from './PropertyTable';
 import './AdminPanel.css';
 
 const AdminPanel: React.FC = () => {
   const { state, dispatch } = useApp();
+  const [activeTab, setActiveTab] = useState<'stats' | 'upload' | 'create' | 'properties'>('stats');
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'upload' | 'manage' | 'stats' | 'create'>('stats');
+
+  const isAdmin = state.user?.email === 'admin@ima.cl' || 
+                 state.user?.email === 'test@mapa-ima.com' || 
+                 state.user?.email === 'marcos.vergara@municipalidadarica.cl';
+  const isAuthenticated = state.user?.isAuthenticated;
+  const userEmail = state.user?.email || '';
 
   const handleLogout = () => {
     dispatch({ type: 'SET_USER', payload: null });
     navigate('/');
   };
 
-  const handleClearAllData = () => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar todas las propiedades? Esta acción no se puede deshacer.')) {
-      dispatch({ type: 'CLEAR_ALL_PROPERTIES' });
-      localStorage.removeItem('arica-properties');
-      dispatch({ type: 'SET_ERROR', payload: null });
-      alert('Todos los datos han sido eliminados exitosamente.');
-    }
+  const handleBackToMap = () => {
+    navigate('/');
   };
+
+  const handleClearAllData = () => {
+    dispatch({ type: 'CLEAR_ALL_DATA' });
+    setShowClearConfirm(false);
+  };
+
+  // Si no está autenticado, redirigir al login
+  if (!isAuthenticated) {
+    navigate('/');
+    return null;
+  }
 
   return (
     <div className="admin-panel">
@@ -32,92 +45,142 @@ const AdminPanel: React.FC = () => {
         <div className="container">
           <div className="admin-header-content">
             <div className="admin-title">
-              <div className="admin-logo">
-                <img 
-                  src="/logo-horizontal-ima.png" 
-                  alt="IMA Logo" 
-                  className="admin-logo-image"
-                />
-              </div>
+              <img 
+                src="/logo-horizontal-ima.png" 
+                alt="Municipalidad de Arica" 
+                className="admin-logo-image"
+              />
               <div className="admin-title-text">
-                <h1>Panel de Administración</h1>
-                <p>Municipalidad de Arica - Gestión de Propiedades</p>
+                {isAdmin ? (
+                  <h1>
+                    Panel de Administración
+                    <span className="subtitle">
+                      - Gestión de propiedades y datos del sistema
+                    </span>
+                  </h1>
+                ) : (
+                  <>
+                    <h1 style={{ fontWeight: 'bold' }}>Panel de Estadísticas</h1>
+                    <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.9rem', color: 'white' }}>
+                       Visualización de estadísticas de propiedades
+                     </p>
+                  </>
+                )}
               </div>
             </div>
-            <div className="admin-actions">
-              <button onClick={() => navigate('/')} className="btn btn-secondary">
-                Ver Mapa
-              </button>
-              <button onClick={handleLogout} className="btn btn-danger">
-                Cerrar Sesión
-              </button>
+            <div className="admin-user-section">
+              <div className="admin-user-info">
+                <span>Bienvenido, {userEmail}</span>
+                {isAdmin && <span className="admin-badge">👑 Administrador</span>}
+              </div>
+              <div className="admin-actions">
+                <button onClick={handleBackToMap} className="btn">
+                  🗺️ Volver al Mapa
+                </button>
+                <button onClick={handleLogout} className="btn">
+                  🚪 Cerrar Sesión
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="admin-content">
-        <div className="container">
-          <div className="admin-tabs">
-            <button
-              className={`tab-btn ${activeTab === 'stats' ? 'active' : ''}`}
-              onClick={() => setActiveTab('stats')}
-            >
-              📊 Estadísticas
-            </button>
-            <button
-              className={`tab-btn ${activeTab === 'upload' ? 'active' : ''}`}
-              onClick={() => setActiveTab('upload')}
-            >
-              📁 Cargar Datos
-            </button>
-            <button
-              className={`tab-btn ${activeTab === 'create' ? 'active' : ''}`}
-              onClick={() => setActiveTab('create')}
-            >
-              ➕ Crear Propiedad
-            </button>
-            <button
-              className={`tab-btn ${activeTab === 'manage' ? 'active' : ''}`}
-              onClick={() => setActiveTab('manage')}
-            >
-              📋 Gestionar Propiedades
-            </button>
-          </div>
-
-          {state.error && (
-            <div className="error">
-              {state.error}
-              <button 
-                onClick={() => dispatch({ type: 'SET_ERROR', payload: null })}
-                className="error-close"
+      <div className="container">
+        <div className="admin-tabs">
+          <button
+            className={`tab-btn ${activeTab === 'stats' ? 'active' : ''}`}
+            onClick={() => setActiveTab('stats')}
+          >
+            📊 Estadísticas
+          </button>
+          {isAdmin && (
+            <>
+              <button
+                className={`tab-btn ${activeTab === 'upload' ? 'active' : ''}`}
+                onClick={() => setActiveTab('upload')}
               >
-                ✕
+                📁 Cargar Datos
+              </button>
+              <button
+                className={`tab-btn ${activeTab === 'create' ? 'active' : ''}`}
+                onClick={() => setActiveTab('create')}
+              >
+                ➕ Crear Propiedad
+              </button>
+              <button
+                className={`tab-btn ${activeTab === 'properties' ? 'active' : ''}`}
+                onClick={() => setActiveTab('properties')}
+              >
+                🏠 Gestionar Propiedades
+              </button>
+            </>
+          )}
+        </div>
+
+        <div className="tab-content">
+          {activeTab === 'stats' && <AdminStats />}
+          {activeTab === 'upload' && isAdmin && <FileUpload />}
+          {activeTab === 'create' && isAdmin && <PropertyCreator />}
+          {activeTab === 'properties' && isAdmin && <PropertyTable />}
+          
+          {/* Mensaje para usuarios no admin que intentan acceder a tabs restringidos */}
+          {!isAdmin && activeTab !== 'stats' && (
+            <div className="access-restricted">
+              <h3>🔒 Acceso Restringido</h3>
+              <p>Esta funcionalidad está disponible solo para administradores.</p>
+              <p>Puedes ver las estadísticas en la pestaña correspondiente.</p>
+              <button 
+                onClick={() => setActiveTab('stats')}
+                className="btn btn-primary"
+              >
+                Ver Estadísticas
               </button>
             </div>
           )}
+        </div>
 
-          <div className="tab-content">
-            {activeTab === 'stats' && <AdminStats />}
-            {activeTab === 'upload' && <FileUpload />}
-            {activeTab === 'create' && <PropertyCreator />}
-            {activeTab === 'manage' && <PropertyTable />}
+        {isAdmin && (
+          <div className="admin-actions">
+            <button
+              onClick={() => setShowClearConfirm(true)}
+              className="btn btn-danger"
+            >
+              🗑️ Limpiar Todos los Datos
+            </button>
           </div>
+        )}
+      </div>
 
-          {state.properties.length > 0 && (
-            <div className="admin-danger-zone">
-              <h3>Zona de Peligro</h3>
-              <p>Las siguientes acciones son irreversibles:</p>
-              <button 
+      {showClearConfirm && isAdmin && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h3>⚠️ Confirmar Eliminación</h3>
+            <p>¿Estás seguro de que quieres eliminar todos los datos?</p>
+            <p>Esta acción no se puede deshacer.</p>
+            <div className="popup-actions">
+              <button
                 onClick={handleClearAllData}
                 className="btn btn-danger"
               >
-                🗑️ Eliminar Todas las Propiedades
+                Sí, eliminar todo
+              </button>
+              <button
+                onClick={() => setShowClearConfirm(false)}
+                className="btn btn-secondary"
+              >
+                Cancelar
               </button>
             </div>
-          )}
+            <button
+              onClick={() => setShowClearConfirm(false)}
+              className="popup-close"
+            >
+              ✕
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
