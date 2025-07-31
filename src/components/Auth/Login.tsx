@@ -76,15 +76,37 @@ const Login: React.FC = () => {
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isSupabaseConfigured()) {
-      setError('Supabase no está configurado correctamente');
-      return;
-    }
-
     setLoading(true);
     setError('');
 
     try {
+      // Verificar credenciales locales para usuarios readonly
+      if ((email === 'admin' && password === 'admin') || 
+          (email === 'admin@admin.com' && password === 'admin')) {
+        // Autenticación local para usuarios de solo lectura
+        const userName = email === 'admin' ? 'Administrador (Solo Lectura)' : 'Admin (Solo Lectura)';
+        const userId = email === 'admin' ? 'readonly-admin' : 'readonly-admin-email';
+        
+        dispatch({
+          type: 'SET_USER',
+          payload: {
+            id: userId,
+            email: email,
+            name: userName,
+            role: 'readonly',
+            isAuthenticated: true,
+          },
+        });
+        navigate('/admin');
+        return;
+      }
+
+      // Si no es el usuario local, intentar con Supabase
+      if (!isSupabaseConfigured()) {
+        setError('Credenciales incorrectas');
+        return;
+      }
+
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({
           email,

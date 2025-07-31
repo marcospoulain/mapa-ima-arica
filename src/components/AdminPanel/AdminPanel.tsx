@@ -16,8 +16,9 @@ const AdminPanel: React.FC = () => {
   const isAdmin = state.user?.email === 'admin@ima.cl' || 
                  state.user?.email === 'test@mapa-ima.com' || 
                  state.user?.email === 'marcos.vergara@municipalidadarica.cl';
+  const isReadOnly = state.user?.role === 'readonly';
   const isAuthenticated = state.user?.isAuthenticated;
-  const userEmail = state.user?.email || '';
+  const userEmail = state.user?.email || state.user?.name || '';
 
   const handleLogout = () => {
     dispatch({ type: 'SET_USER', payload: null });
@@ -58,6 +59,13 @@ const AdminPanel: React.FC = () => {
                       Gestión de propiedades y datos del sistema
                     </p>
                   </>
+                ) : isReadOnly ? (
+                  <>
+                    <h1 style={{ fontWeight: 'bold', color: 'white' }}>Panel de Administración</h1>
+                    <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.9rem', color: 'white' }}>
+                      Visualización completa del sistema (Solo Lectura)
+                    </p>
+                  </>
                 ) : (
                   <>
                     <h1 style={{ fontWeight: 'bold' }}>Panel de Estadísticas</h1>
@@ -72,6 +80,7 @@ const AdminPanel: React.FC = () => {
               <div className="admin-user-info">
                 <span>Bienvenido, {userEmail}</span>
                 {isAdmin && <span className="admin-badge">👑 Administrador</span>}
+                {isReadOnly && <span className="admin-badge readonly-badge">👁️ Solo Lectura</span>}
               </div>
               <div className="admin-actions">
                 <button onClick={handleBackToMap} className="btn">
@@ -97,7 +106,7 @@ const AdminPanel: React.FC = () => {
           >
             📊 Estadísticas
           </button>
-          {isAdmin && (
+          {(isAdmin || isReadOnly) && (
             <>
               <button
                 className={`tab-btn ${activeTab === 'upload' ? 'active' : ''}`}
@@ -123,12 +132,12 @@ const AdminPanel: React.FC = () => {
 
         <div className="tab-content">
           {activeTab === 'stats' && <AdminStats />}
-          {activeTab === 'upload' && isAdmin && <FileUpload />}
-          {activeTab === 'create' && isAdmin && <PropertyCreator />}
-          {activeTab === 'properties' && isAdmin && <PropertyTable />}
+          {activeTab === 'upload' && (isAdmin || isReadOnly) && <FileUpload />}
+          {activeTab === 'create' && (isAdmin || isReadOnly) && <PropertyCreator />}
+          {activeTab === 'properties' && (isAdmin || isReadOnly) && <PropertyTable />}
           
           {/* Mensaje para usuarios no admin que intentan acceder a tabs restringidos */}
-          {!isAdmin && activeTab !== 'stats' && (
+          {!isAdmin && !isReadOnly && activeTab !== 'stats' && (
             <div className="access-restricted">
               <h3>🔒 Acceso Restringido</h3>
               <p>Esta funcionalidad está disponible solo para administradores.</p>

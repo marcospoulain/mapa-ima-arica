@@ -50,7 +50,7 @@ export interface User {
   username?: string;
   email?: string;
   name?: string;
-  role?: 'admin' | 'user';
+  role?: 'admin' | 'user' | 'readonly';
   isAuthenticated: boolean;
 }
 

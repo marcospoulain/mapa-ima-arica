@@ -25,10 +25,14 @@ const PropertyCreator: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCoordinateSelector, setShowCoordinateSelector] = useState(false);
 
-  // Verificar si el usuario es administrador
+  // Verificar si el usuario es administrador o readonly
   const isAdmin = state.user?.email === 'admin@ima.cl' || 
                  state.user?.email === 'test@mapa-ima.com' || 
                  state.user?.email === 'marcos.vergara@municipalidadarica.cl';
+  
+  const isReadOnly = state.user?.role === 'readonly';
+  const canModify = isAdmin; // Solo admin puede modificar
+  const canView = isAdmin || isReadOnly; // Admin y readonly pueden ver
 
   const handleCoordinateSelect = (latitude: number, longitude: number, address?: string) => {
     setFormData(prev => ({
@@ -93,7 +97,7 @@ const PropertyCreator: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isAdmin) {
+    if (!canModify) {
       alert('No tienes permisos para crear propiedades. Solo los administradores pueden realizar esta acción.');
       return;
     }
@@ -176,7 +180,16 @@ const PropertyCreator: React.FC = () => {
         <p>Complete los datos de la nueva propiedad</p>
       </div>
 
-      {!isAdmin && (
+      {!canModify && canView && (
+        <div className="user-notification">
+          <div className="notification-content">
+            <h3>Modo Solo Lectura</h3>
+            <p>Puedes visualizar el formulario de creación pero no crear nuevas propiedades. Solo los administradores pueden crear propiedades.</p>
+          </div>
+        </div>
+      )}
+
+      {!canView && (
         <div className="user-notification">
           <div className="notification-content">
             <h3>Acceso Restringido</h3>
@@ -185,7 +198,7 @@ const PropertyCreator: React.FC = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className={`creator-form ${!isAdmin ? 'disabled' : ''}`}>
+      <form onSubmit={handleSubmit} className={`creator-form ${!canModify ? 'disabled' : ''}`}>
         <div className="form-grid">
           <div className="form-group">
             <label htmlFor="numeroRol">ROL *</label>
