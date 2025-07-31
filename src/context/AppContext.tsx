@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useCallback, ReactNode, useEffect } from 'react';
 import { Property, User, AppState } from '../types';
+import { loadInitialData } from '../utils/initialDataLoader';
 
 type Action =
   | { type: 'SET_PROPERTIES'; payload: Property[] }
@@ -59,6 +60,7 @@ interface AppContextType {
   dispatch: React.Dispatch<Action>;
   loadPropertiesFromStorage: () => void;
   savePropertiesToStorage: (properties: Property[]) => void;
+  loadInitialDataIfEmpty: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -72,10 +74,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (stored) {
         const properties = JSON.parse(stored);
         dispatch({ type: 'SET_PROPERTIES', payload: properties });
+        return true;
       }
+      return false;
     } catch (error) {
       console.error('Error loading properties from storage:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Error al cargar los datos almacenados' });
+      return false;
     }
   }, []);
 
@@ -88,8 +93,47 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const loadInitialDataIfEmpty = useCallback(async () => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      
+      // Primero intentar cargar desde localStorage
+      const hasStoredData = loadPropertiesFromStorage();
+      
+      // Si no hay datos almacenados, cargar datos iniciales
+      if (!hasStoredData) {
+        console.log('No hay datos almacenados, cargando datos iniciales...');
+        const initialProperties = await loadInitialData();
+        
+        if (initialProperties.length > 0) {
+          dispatch({ type: 'SET_PROPERTIES', payload: initialProperties });
+          savePropertiesToStorage(initialProperties);
+          console.log(`Cargadas ${initialProperties.length} propiedades iniciales`);
+        } else {
+          dispatch({ type: 'SET_PROPERTIES', payload: [] });
+        }
+      }
+    } catch (error) {
+      console.error('Error cargando datos iniciales:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Error al cargar los datos iniciales' });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  }, [loadPropertiesFromStorage, savePropertiesToStorage]);
+
+  // Cargar datos al inicializar la aplicación
+  useEffect(() => {
+    loadInitialDataIfEmpty();
+  }, [loadInitialDataIfEmpty]);
+
   return (
-    <AppContext.Provider value={{ state, dispatch, loadPropertiesFromStorage, savePropertiesToStorage }}>
+    <AppContext.Provider value={{ 
+      state, 
+      dispatch, 
+      loadPropertiesFromStorage, 
+      savePropertiesToStorage,
+      loadInitialDataIfEmpty 
+    }}>
       {children}
     </AppContext.Provider>
   );

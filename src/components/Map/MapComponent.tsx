@@ -235,12 +235,7 @@ const MapComponent: React.FC = () => {
         </div>
       )}
       
-      {state.properties.length === 0 && !state.loading && (
-        <div className="map-empty">
-          <p>No hay propiedades para mostrar</p>
-          <p>Carga un archivo Excel desde el panel de administración</p>
-        </div>
-      )}
+
     </div>
   );
 };
