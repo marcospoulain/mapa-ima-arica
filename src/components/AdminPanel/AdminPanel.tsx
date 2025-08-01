@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import AdminStats from './AdminStats';
 import FileUpload from './FileUpload';
+import FileUploadWithUpdate from './FileUploadWithUpdate';
 import PropertyCreator from './PropertyCreator';
 import PropertyTable from './PropertyTable';
 import './AdminPanel.css';
 
 const AdminPanel: React.FC = () => {
   const { state, dispatch } = useApp();
-  const [activeTab, setActiveTab] = useState<'stats' | 'upload' | 'create' | 'properties'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'upload' | 'update' | 'create' | 'properties'>('stats');
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const navigate = useNavigate();
 
@@ -115,6 +116,12 @@ const AdminPanel: React.FC = () => {
                 📁 Cargar Datos
               </button>
               <button
+                className={`tab-btn ${activeTab === 'update' ? 'active' : ''}`}
+                onClick={() => setActiveTab('update')}
+              >
+                🔄 Actualizar Datos
+              </button>
+              <button
                 className={`tab-btn ${activeTab === 'create' ? 'active' : ''}`}
                 onClick={() => setActiveTab('create')}
               >
@@ -133,6 +140,7 @@ const AdminPanel: React.FC = () => {
         <div className="tab-content">
           {activeTab === 'stats' && <AdminStats />}
           {activeTab === 'upload' && (isAdmin || isReadOnly) && <FileUpload />}
+          {activeTab === 'update' && (isAdmin || isReadOnly) && <FileUploadWithUpdate />}
           {activeTab === 'create' && (isAdmin || isReadOnly) && <PropertyCreator />}
           {activeTab === 'properties' && (isAdmin || isReadOnly) && <PropertyTable />}
           

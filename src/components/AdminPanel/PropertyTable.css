@@ -22,38 +22,58 @@
   display: inline-block;
   width: 100%;
   max-width: 400px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .search-input {
   width: 100%;
   padding: 12px 40px 12px 16px;
-  border: 2px solid #5CBCE6;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
-  transition: border-color 0.2s ease;
+  background: white;
+  color: var(--primary-color);
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
 }
 
 .clear-search-btn {
   position: absolute;
-  right: 0.75rem;
-  background: none;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(108, 117, 125, 0.1);
   border: none;
-  color: var(--text-secondary);
+  color: #6c757d;
   cursor: pointer;
-  padding: 0.25rem;
+  padding: 4px;
   border-radius: 50%;
-  font-size: 0.875rem;
-  transition: all 0.2s;
+  font-size: 12px;
+  font-weight: bold;
+  transition: background-color 0.2s ease, color 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 20px;
+  height: 20px;
+  line-height: 1;
 }
 
 .clear-search-btn:hover {
-  background: var(--border-color);
-  color: var(--text-primary);
+  background: rgba(193, 193, 194, 0.2);
+  color: #ffffff;
+  transform: translateY(-50%);
 }
 
 .pagination-control label {
@@ -103,6 +123,7 @@
   border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .properties-table {
@@ -112,11 +133,11 @@
 }
 
 .properties-table th {
-  background: var(--background-gray);
+  background: var(--primary-color);
   padding: 1rem 0.75rem;
   text-align: left;
   font-weight: 600;
-  color: var(--text-primary);
+  color: white;
   border-bottom: 1px solid var(--border-color);
   font-size: 0.875rem;
   white-space: nowrap;
@@ -129,7 +150,7 @@
 }
 
 .properties-table th.sortable:hover {
-  background: #e5e7eb;
+  background: rgba(59, 130, 246, 0.8);
 }
 
 .properties-table td {

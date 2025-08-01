@@ -174,6 +174,112 @@ export const uploadPropertyImage = async (file: File, propertyId: string): Promi
   }
 };
 
+// Buscar propiedad por ROL (identificador único)
+export const getPropertyByROL = async (rol: string): Promise<Property | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('properties')
+      .select('*')
+      .eq('title', rol)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // No se encontró la propiedad
+        return null;
+      }
+      throw error;
+    }
+
+    // Mapear los datos de Supabase al formato de Property
+    return {
+      id: data.id,
+      title: data.title || '',
+      type: data.type || '',
+      price: data.price || 0,
+      location: data.location || '',
+      description: data.description || '',
+      bedrooms: data.bedrooms || 0,
+      bathrooms: data.bathrooms || 0,
+      area: data.area || 0,
+      coordinates: (data.coordinates as { lat: number; lng: number }) || { lat: -18.4783, lng: -70.3126 },
+      imageUrl: data.image_url || '',
+      features: (data.features as string[]) || [],
+      status: data.status || 'active',
+      createdAt: new Date(data.created_at),
+      updatedAt: new Date(data.updated_at),
+      // Campos adicionales para compatibilidad
+      latitud: (data.coordinates as any)?.lat || -18.4783,
+      longitud: (data.coordinates as any)?.lng || -70.3126
+    };
+  } catch (error) {
+    console.error('Error getting property by ROL:', error);
+    throw error;
+  }
+};
+
+// Función para actualizar o insertar propiedades (upsert) sin duplicidad
+export const upsertProperty = async (property: Omit<Property, 'id'>): Promise<{ id: string; isNew: boolean }> => {
+  try {
+    const rol = property.title || property.rol || '';
+    
+    if (!rol) {
+      throw new Error('ROL es requerido para identificar la propiedad');
+    }
+
+    // Buscar si ya existe una propiedad con este ROL
+    const existingProperty = await getPropertyByROL(rol);
+
+    if (existingProperty) {
+      // Actualizar propiedad existente
+      await updateProperty(existingProperty.id, property);
+      return { id: existingProperty.id, isNew: false };
+    } else {
+      // Crear nueva propiedad
+      const newId = await addProperty(property);
+      return { id: newId, isNew: true };
+    }
+  } catch (error) {
+    console.error('Error upserting property:', error);
+    throw error;
+  }
+};
+
+// Función para procesar múltiples propiedades con upsert
+export const bulkUpsertProperties = async (properties: Omit<Property, 'id'>[]): Promise<{
+  created: number;
+  updated: number;
+  errors: Array<{ index: number; error: string; rol: string }>;
+}> => {
+  const results = {
+    created: 0,
+    updated: 0,
+    errors: [] as Array<{ index: number; error: string; rol: string }>
+  };
+
+  for (let i = 0; i < properties.length; i++) {
+    const property = properties[i];
+    const rol = property.title || property.rol || `Propiedad ${i + 1}`;
+
+    try {
+      const result = await upsertProperty(property);
+      if (result.isNew) {
+        results.created++;
+      } else {
+        results.updated++;
+      }
+    } catch (error) {
+      results.errors.push({
+        index: i + 1,
+        error: error instanceof Error ? error.message : 'Error desconocido',
+        rol: rol
+      });
+    }
+  }
+
+  return results;
+};
+
 // Buscar propiedades por filtros
 export const searchProperties = async (filters: {
   type?: string;
